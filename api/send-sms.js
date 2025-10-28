@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const crypto = require("crypto");
 
 export default async function handler(req, res) {
