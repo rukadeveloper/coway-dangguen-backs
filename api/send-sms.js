@@ -83,7 +83,7 @@ export default async function handler(req, res) {
 
     res.setHeader(
       "Access-Control-Allow-Origin",
-      "https://coway-danguen.netlify.app"
+      "https://coway-danguen.netlify.app/"
     );
     return res.status(500).json({
       success: false,
