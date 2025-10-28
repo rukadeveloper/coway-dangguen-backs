@@ -1,6 +1,8 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "functions": {
-    "api/**/*.js": {
+    "api/**/*.{js,ts}": {
       "runtime": "nodejs18.x"
     }
   }
