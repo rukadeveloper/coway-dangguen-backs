@@ -27,7 +27,7 @@ function createAuthHeader(apiKey, apiSecret) {
 }
 
 // SMS 전송 라우트
-app.post("/send-sms", async (req, res) => {
+app.post("/api/send-sms", async (req, res) => {
   const { to, message } = req.body;
   const apiKey = process.env.SOLAPI_API_KEY; // 환경변수에 저장
   const apiSecret = process.env.SOLAPI_SECRET_KEY; // 환경변수에 저장
