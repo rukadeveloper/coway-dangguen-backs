@@ -1,14 +1,18 @@
 // /api/send-sms.js
+// /api/send-sms.js
 const crypto = require("crypto");
 const axios = require("axios");
 
 export default async function handler(req, res) {
-  // ✅ CORS 설정
-  res.setHeader("Access-Control-Allow-Origin", "*"); // 필요 시 도메인 제한 가능: "https://example.com"
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  // ✅ CORS 헤더 반드시 최상단에서 설정
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://coway-danguen.netlify.app"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  // ✅ OPTIONS 사전 요청 (CORS preflight) 처리
+  // ✅ OPTIONS 요청(Preflight) 처리
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -26,7 +30,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "to와 message는 필수입니다." });
   }
 
-  // ✅ 환경 변수 유효성 검사
   if (!apiKey || !apiSecret || !from) {
     console.error("Missing environment variables");
     return res
@@ -65,11 +68,22 @@ export default async function handler(req, res) {
 
   try {
     const response = await axios.post(url, body, { headers });
+
+    // ✅ 응답에도 CORS 헤더 유지 (안전)
+    res.setHeader(
+      "Access-Control-Allow-Origin",
+      "https://coway-danguen.netlify.app"
+    );
     return res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(
       "SOLAPI Error:",
       error.response ? error.response.data : error.message
+    );
+
+    res.setHeader(
+      "Access-Control-Allow-Origin",
+      "https://coway-danguen.netlify.app"
     );
     return res.status(500).json({
       success: false,
