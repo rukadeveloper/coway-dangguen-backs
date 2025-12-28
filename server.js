@@ -1,8 +1,8 @@
-// server.js
+// server.js - Updated CORS Configuration
 const express = require("express");
 const crypto = require("crypto");
 const axios = require("axios");
-const cors = require("cors"); // 추가
+const cors = require("cors");
 const dotenv = require("dotenv");
 
 dotenv.config();
