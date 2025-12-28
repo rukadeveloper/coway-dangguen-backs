@@ -10,29 +10,14 @@ dotenv.config();
 const app = express();
 app.use(express.json()); // JSON 바디 파싱
 
-// CORS 설정
-const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      "https://coway-danguen.vercel.app",
-      "https://coway-danguen.netlify.app",
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "http://localhost:5000",
-    ];
-
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "OPTIONS"],
-  credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-app.use(cors(corsOptions));
+// CORS 설정 - 모든 도메인 허용 (프로덕션에서는 제한 권장)
+app.use(
+  cors({
+    origin: "*", // 모든 origin 허용
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // HMAC-SHA256 시그니처 생성
 function generateSignature(apiSecret, dateTime, salt) {
