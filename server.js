@@ -9,7 +9,18 @@ dotenv.config();
 
 const app = express();
 app.use(express.json()); // JSON 바디 파싱
-app.use(cors()); // 모든 도메인 허용
+app.use(
+  cors({
+    origin: [
+      "https://coway-danguen.vercel.app",
+      "https://coway-danguen.netlify.app",
+      "http://localhost:5173",
+      "http://localhost:3000",
+    ],
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+  })
+);
 
 // HMAC-SHA256 시그니처 생성
 function generateSignature(apiSecret, dateTime, salt) {
