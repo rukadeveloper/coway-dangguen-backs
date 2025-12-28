@@ -41,6 +41,29 @@ app.post("/api/send-sms", async (req, res) => {
   const apiSecret = process.env.SOLAPI_SECRET_KEY; // 환경변수에 저장
   const from = process.env.SOLAPI_FROM_NUMBER; // 승인된 발신번호
 
+  console.log("=== SMS 전송 요청 ===");
+  console.log("to:", to);
+  console.log("message:", message);
+  console.log("apiKey:", apiKey ? "✓ 설정됨" : "✗ 미설정");
+  console.log("apiSecret:", apiSecret ? "✓ 설정됨" : "✗ 미설정");
+  console.log("from:", from ? `✓ ${from}` : "✗ 미설정");
+
+  if (!to || !message) {
+    return res.status(400).json({ error: "to와 message는 필수입니다." });
+  }
+
+  if (!apiKey || !apiSecret || !from) {
+    console.error("환경 변수 누락");
+    return res.status(500).json({
+      error: "서버 설정 오류: 환경 변수가 설정되지 않았습니다.",
+      details: {
+        apiKey: !!apiKey,
+        apiSecret: !!apiSecret,
+        from: !!from,
+      },
+    });
+  }
+
   const body = {
     messages: [
       {
@@ -52,12 +75,6 @@ app.post("/api/send-sms", async (req, res) => {
     ],
   };
 
-  console.log(apiKey, apiSecret, from);
-
-  if (!to || !message) {
-    return res.status(400).json({ error: "to와 message는 필수입니다." });
-  }
-
   const url = "https://api.solapi.com/messages/v4/send-many/detail"; // 실제 SMS API URL
   const headers = {
     "Content-Type": "application/json",
@@ -65,10 +82,15 @@ app.post("/api/send-sms", async (req, res) => {
   };
 
   try {
+    console.log("API 호출 시작...");
     const response = await axios.post(url, body, { headers });
+    console.log("API 응답 성공:", response.data);
     res.json({ success: true, data: response.data });
   } catch (error) {
-    console.error(error.response ? error.response.data : error.message);
+    console.error("=== API 호출 실패 ===");
+    console.error("Status:", error.response?.status);
+    console.error("Data:", error.response?.data);
+    console.error("Message:", error.message);
     res.status(500).json({
       success: false,
       error: error.response ? error.response.data : error.message,
